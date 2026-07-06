@@ -1,0 +1,98 @@
+<template>
+    <lightning-card title="Create Property" icon-name="standard:real_estate_property">
+
+        <template if:true={isSaving}>
+            <lightning-spinner alternative-text="Saving" size="medium"></lightning-spinner>
+        </template>
+
+        <!-- Step 1: Property Details Form -->
+        <template if:true={isFormStep}>
+            <div class="slds-p-around_medium">
+                <div class="slds-grid slds-gutters slds-wrap">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input label="Property Name" data-field="name" value={fields.name} onchange={handleFieldChange} required></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input label="Rent" type="number" step="0.01" data-field="rent" value={fields.rent} onchange={handleFieldChange} required></lightning-input>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input label="Street" data-field="street" value={fields.street} onchange={handleFieldChange} required></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input label="City" data-field="city" value={fields.city} onchange={handleFieldChange} required></lightning-input>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-combobox label="State/Province" data-field="state" value={fields.state} options={stateOptions} onchange={handleComboChange} required placeholder="Select a state"></lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input label="Postal Code" data-field="postalCode" value={fields.postalCode} onchange={handleFieldChange} required></lightning-input>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-combobox label="Country" data-field="country" value={fields.country} options={countryOptions} onchange={handleComboChange} required placeholder="Select a country"></lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-combobox label="Type" data-field="type" value={fields.type} options={typeOptions} onchange={handleComboChange} required></lightning-combobox>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-combobox label="Furnishing Status" data-field="furnishingStatus" value={fields.furnishingStatus} options={furnishingOptions} onchange={handleComboChange}></lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-combobox label="Status" data-field="status" value={fields.status} options={statusOptions} onchange={handleComboChange} required></lightning-combobox>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning-textarea label="Description" data-field="description" value={fields.description} onchange={handleFieldChange} required></lightning-textarea>
+                    </div>
+                </div>
+
+                <div class="slds-p-top_medium slds-text-align_right">
+                    <lightning-button label="Next: Upload Images" variant="brand" onclick={handleCreateDraft}></lightning-button>
+                </div>
+            </div>
+        </template>
+
+        <!-- Step 2: Mandatory Image Upload -->
+        <template if:true={isUploadStep}>
+            <div class="slds-p-around_medium">
+                <p class="slds-p-bottom_small">
+                    At least one image is required before this property can be saved.
+                </p>
+
+                <lightning-file-upload
+                    label="Upload Property Images"
+                    name="propertyImages"
+                    accept={acceptedFormats}
+                    record-id={draftPropertyId}
+                    multiple
+                    onuploadfinished={handleUploadFinished}>
+                </lightning-file-upload>
+
+                <p class="slds-p-top_small slds-text-color_weak">
+                    {uploadedFileCount} file(s) uploaded.
+                </p>
+
+                <div class="slds-p-top_medium slds-grid slds-grid_align-spread">
+                    <lightning-button label="Cancel" onclick={handleCancelUpload}></lightning-button>
+                    <lightning-button label="Finish" variant="brand" onclick={handleFinish} disabled={finishDisabled}></lightning-button>
+                </div>
+            </div>
+        </template>
+
+        <!-- Step 3: Done -->
+        <template if:true={isDoneStep}>
+            <div class="slds-p-around_medium slds-text-align_center">
+                <lightning-icon icon-name="utility:success" variant="success" size="medium"></lightning-icon>
+                <p class="slds-p-top_small">Property created successfully.</p>
+                <div class="slds-p-top_medium">
+                    <lightning-button label="View Property" variant="brand" onclick={handleViewRecord} class="slds-m-right_small"></lightning-button>
+                    <lightning-button label="Create Another" onclick={handleCreateAnother}></lightning-button>
+                </div>
+            </div>
+        </template>
+
+    </lightning-card>
+</template>

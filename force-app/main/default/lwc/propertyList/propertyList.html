@@ -1,0 +1,105 @@
+<template>
+    <lightning-card title="Properties" icon-name="standard:real_estate_property">
+
+        <!-- Filter Panel -->
+        <div class="slds-p-around_medium slds-border_bottom">
+            <div class="slds-grid slds-gutters slds-wrap slds-align-bottom">
+                
+                <!-- Price Filters -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-6">
+                    <lightning-input type="number" label="Min Rent" formatter="currency" step="0.01" onchange={handleMinPriceChange} value={minPrice}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-6">
+                    <lightning-input type="number" label="Max Rent" formatter="currency" step="0.01" onchange={handleMaxPriceChange} value={maxPrice}></lightning-input>
+                </div>
+
+                <!-- Status Filters -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-6">
+                    <lightning-combobox label="Availability" value={status} options={statusOptions} onchange={handleStatusChange}></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-6">
+                    <lightning-combobox label="Furnishing" value={furnishingStatus} options={furnishingOptions} onchange={handleFurnishingChange}></lightning-combobox>
+                </div>
+
+                <!-- ZIP CODE SEARCH (The New Part) -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-6">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_3-of-5">
+                            <lightning-input type="text" label="Zip Code" placeholder="Enter Zip" onchange={handleZipChange} value={zipCode}></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_2-of-5">
+                            <lightning-input type="number" label="Range" placeholder="km" onchange={handleDistanceChange} value={distanceKm}></lightning-input>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-6 slds-grid slds-grid_align-end">
+                    <lightning-button label="Apply" variant="brand" onclick={handleApplyFilters} class="slds-m-right_x-small"></lightning-button>
+                    <lightning-button label="Clear" onclick={handleClearFilters}></lightning-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Messaging -->
+        <template if:true={errorMessage}>
+            <div class="slds-p-horizontal_medium slds-p-top_small">
+                <div class="slds-notify slds-notify_alert slds-theme_error" role="alert">
+                    {errorMessage}
+                </div>
+            </div>
+        </template>
+
+        <!-- Loading Spinner -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+
+        <!-- Data Table -->
+        <div class="slds-p-around_medium">
+            <template if:true={hasProperties}>
+                <table class="slds-table slds-table_bordered slds-table_fixed-layout">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col">Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Rent</th>
+                            <th scope="col">Furnishing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={properties} for:item="prop">
+                            <tr key={prop.Id}>
+                                <td><a href={prop.recordUrl} target="_blank">{prop.Name}</a></td>
+                                <td>{prop.Type__c}</td>
+                                <td>
+                                    <span class={prop.statusBadgeClass}>{prop.Status__c}</span>
+                                </td>
+                                <td><lightning-formatted-number value={prop.Rent__c} format-style="currency"></lightning-formatted-number></td>
+                                <td>{prop.Furnishing_Status__c}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="slds-p-vertical_medium slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                    <lightning-button label="Previous" icon-name="utility:chevronleft" onclick={handlePrevious} disabled={isFirstPage}></lightning-button>
+                    <span class="slds-text-title_bold">{pageInfoLabel}</span>
+                    <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={handleNext} disabled={isLastPage}></lightning-button>
+                </div>
+            </template>
+
+            <!-- Empty State -->
+            <template if:false={hasProperties}>
+                <template if:false={isLoading}>
+                    <div class="slds-text-align_center slds-p-around_large">
+                        <p class="slds-text-heading_small slds-text-color_weak">No properties found matching your criteria.</p>
+                    </div>
+                </template>
+            </template>
+        </div>
+
+    </lightning-card>
+</template>

@@ -1,0 +1,74 @@
+<template>
+    <!-- SPINNER -->
+    <template if:false={isLoaded}>
+        <div style="height: 300px; position: relative; background: white; border: 1px solid #d2d2d2; border-radius: 8px;">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <!-- CONTENT -->
+    <template if:true={isLoaded}>
+        <div class="slds-card" style="border: 1px solid #d2d2d2; border-radius: 8px; overflow: hidden; background: white;">
+            
+            <!-- HEADER -->
+            <div class="slds-p-around_medium" style="background: #f8f9fb; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-size: 1.5rem; font-weight: 800; color: #00396b; margin: 0;">{propertyName}</h1>
+                    <p style="color: #6a6a6a; margin: 0; font-size: 0.85rem;">Property Location & Specs</p>
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #2e844a;">{formattedRent}</div>
+            </div>
+
+            <div class="slds-grid slds-wrap">
+                <!-- LEFT: MAP (4/6) -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12" style="height: 500px; background: #e0e5eb;">
+                    <template if:true={mapMarkers.length}>
+                        <lightning-map
+                            map-markers={mapMarkers}
+                            zoom-level="15"
+                            list-view="hidden"
+                            style="height: 100%; width: 100%; display: block;">
+                        </lightning-map>
+                    </template>
+                    <template if:false={mapMarkers.length}>
+                        <div class="slds-align_absolute-center" style="height: 100%; font-style: italic; color: #666;">
+                            Map Coordinates not yet available.
+                        </div>
+                    </template>
+                </div>
+
+                <!-- RIGHT: SIDEBAR (2/6) -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-border_left" style="height: 500px; display: flex; flex-direction: column; background: #fff;">
+                    
+                    <!-- IMAGES -->
+                    <div style="height: 240px; background: #000; border-bottom: 1px solid #eee;">
+                        <template if:true={imageUrls}>
+                            <lightning-carousel disable-auto-scroll style="height: 100%;">
+                                <template for:each={imageUrls} for:item="url">
+                                    <lightning-carousel-image key={url} src={url}></lightning-carousel-image>
+                                </template>
+                            </lightning-carousel>
+                        </template>
+                    </div>
+
+                    <!-- SPECIFICATIONS LIST -->
+                    <div class="slds-p-around_medium slds-scrollable_y" style="flex-grow: 1;">
+                        <h2 style="font-size: 0.75rem; font-weight: 700; color: #00396b; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #00396b; display: inline-block; margin-bottom: 15px;">
+                            Details
+                        </h2>
+
+                        <!-- Using record-view-form for standard output field styling -->
+                        <lightning-record-view-form record-id={recordId} object-api-name="Property__c">
+                            <div class="slds-form-element slds-form-element_readonly">
+                                <lightning-output-field field-name="Status__c"></lightning-output-field>
+                                <lightning-output-field field-name="Type__c"></lightning-output-field>
+                                <lightning-output-field field-name="Furnishing_Status__c"></lightning-output-field>
+                                <lightning-output-field field-name="Description__c"></lightning-output-field>
+                            </div>
+                        </lightning-record-view-form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>
