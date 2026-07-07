@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="Document Actions" icon-name="standard:pdf">
+        <div class="slds-p-around_medium slds-text-align_center">
+            <template if:true={isLoading}>
+                <lightning-spinner size="small"></lightning-spinner>
+            </template>
+            <lightning-button label="Download PDF" icon-name="utility:download" onclick={handleDownload} class="slds-m-right_small"></lightning-button>
+            <lightning-button label="Send to Tenant" icon-name="utility:email" variant="brand" onclick={handleSend}></lightning-button>
+        </div>
+    </lightning-card>
+</template>
